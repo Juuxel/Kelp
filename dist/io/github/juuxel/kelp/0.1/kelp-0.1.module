@@ -1,0 +1,90 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "io.github.juuxel",
+    "module": "kelp",
+    "version": "0.1",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "7.2"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api"
+      },
+      "files": [
+        {
+          "name": "kelp-0.1.jar",
+          "url": "kelp-0.1.jar",
+          "size": 32758,
+          "sha512": "59860af02e84184e8aea2f7a11de265e88aec01c70efd56f72c03fb1b5ca71d81540196d40ac5e2632fc50460cb30cb6e1cb3e2dd30a67d51ad768019862d6b1",
+          "sha256": "bcda53c7e8e5c2b253d688c99b0939c7e61ac1ac1221ffd07cd4cda047e67419",
+          "sha1": "71931b19546753d1b9d4b48f8e7ef8d6fa92b2a2",
+          "md5": "d23e150d5a8daf8458aa9040e1522616"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "dependencies": [
+        {
+          "group": "org.jetbrains",
+          "module": "annotations",
+          "version": {
+            "requires": "23.0.0"
+          }
+        },
+        {
+          "group": "com.squareup.moshi",
+          "module": "moshi",
+          "version": {
+            "requires": "1.13.0"
+          }
+        },
+        {
+          "group": "info.picocli",
+          "module": "picocli",
+          "version": {
+            "requires": "4.6.3"
+          }
+        },
+        {
+          "group": "com.google.guava",
+          "module": "guava",
+          "version": {
+            "requires": "31.1-jre"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "kelp-0.1.jar",
+          "url": "kelp-0.1.jar",
+          "size": 32758,
+          "sha512": "59860af02e84184e8aea2f7a11de265e88aec01c70efd56f72c03fb1b5ca71d81540196d40ac5e2632fc50460cb30cb6e1cb3e2dd30a67d51ad768019862d6b1",
+          "sha256": "bcda53c7e8e5c2b253d688c99b0939c7e61ac1ac1221ffd07cd4cda047e67419",
+          "sha1": "71931b19546753d1b9d4b48f8e7ef8d6fa92b2a2",
+          "md5": "d23e150d5a8daf8458aa9040e1522616"
+        }
+      ]
+    }
+  ]
+}

@@ -1,5 +1,6 @@
 plugins {
     java
+    `maven-publish`
 }
 
 group = "io.github.juuxel"
@@ -24,4 +25,16 @@ tasks.withType<JavaCompile> {
 
 tasks.getByName<Test>("test") {
     useJUnitPlatform()
+}
+
+publishing {
+    publications.create<MavenPublication>("maven") {
+        from(components["java"])
+    }
+
+    repositories {
+        maven(file("dist")) {
+            name = "dist"
+        }
+    }
 }
