@@ -1,0 +1,2 @@
+* text=auto eol
+*.bat text eol=crlf
