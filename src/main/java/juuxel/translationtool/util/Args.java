@@ -11,12 +11,16 @@ import java.util.List;
 import java.util.Map;
 
 public record Args(boolean success, String[] args, Map<ArgsSchema.Entry, String> parsed) {
+    public boolean hasFlag(ArgsSchema.Flag flag) {
+        return parsed.containsKey(flag);
+    }
+
     public boolean shouldShowHelp() {
-        return !success || parsed.containsKey(ArgsSchema.HELP);
+        return !success || hasFlag(ArgsSchema.HELP);
     }
 
     public boolean shouldShowVersion() {
-        return parsed.containsKey(ArgsSchema.VERSION);
+        return hasFlag(ArgsSchema.VERSION);
     }
 
     public int exitCode() {

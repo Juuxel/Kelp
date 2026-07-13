@@ -17,6 +17,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
@@ -87,8 +88,9 @@ public final class TranslationFile implements TranslationModel {
         return new Schema(entries);
     }
 
-    public void setSchema(Schema schema) {
+    public void applySchema(Schema schema, boolean logRemovals) {
         var translations = translationsAsMap();
+        Set<String> remainingKeys = logRemovals ? new HashSet<>(translations.keySet()) : null;
         rows.clear();
 
         // Filters out duplicated and leading gaps
@@ -101,6 +103,7 @@ public final class TranslationFile implements TranslationModel {
                     if (translation != null) {
                         rows.add(new Translation(key, translation));
                         shouldAddGap = true;
+                        if (logRemovals) remainingKeys.remove(key);
                     }
                 }
 
@@ -116,6 +119,14 @@ public final class TranslationFile implements TranslationModel {
         // Remove trailing gaps
         while (!rows.isEmpty() && rows.getLast() instanceof Gap) {
             rows.removeLast();
+        }
+
+        if (logRemovals && !remainingKeys.isEmpty()) {
+            System.err.printf("Removing %d keys from %s:%n", remainingKeys.size(), filePath);
+
+            for (String key : remainingKeys) {
+                System.err.println(" - " + key);
+            }
         }
     }
 

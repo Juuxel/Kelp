@@ -127,7 +127,7 @@ public final class TranslationView {
             toolBar.addSeparator();
             toolBar.add(new SimpleAction("Apply Schema", () -> {
                 file.createSnapshot();
-                file.setSchema(owner.getModel().getSchema());
+                file.applySchema(owner.getModel().getSchema(), false);
                 tableModel.fireTableDataChanged();
                 table.clearSelection();
                 owner.markDirty();

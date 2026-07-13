@@ -26,12 +26,16 @@ import java.util.Optional;
 public final class Main {
     static void main(String[] args) throws IOException {
         var fileArg = new Args.ArgsSchema.Positional("file");
+        var verboseArg = new Args.ArgsSchema.Flag("-v", "--verbose");
+        var dryRunArg = new Args.ArgsSchema.Flag("--dry-run");
         var reformatArg = new Args.ArgsSchema.Flag("--reformat");
         var argsSchema = new Args.ArgsSchema(
             List.of(fileArg),
             List.of(
                 Args.ArgsSchema.HELP,
                 Args.ArgsSchema.VERSION,
+                verboseArg,
+                dryRunArg,
                 reformatArg
             )
         );
@@ -50,13 +54,13 @@ public final class Main {
 
         String filePath = parsedArgs.parsed().get(fileArg);
 
-        if (parsedArgs.parsed().containsKey(reformatArg)) {
+        if (parsedArgs.hasFlag(reformatArg)) {
             if (filePath == null) {
                 System.err.println("Must provide file path to reformat");
                 System.exit(1);
             }
 
-            reformat(Path.of(filePath));
+            reformat(Path.of(filePath), parsedArgs.hasFlag(verboseArg), parsedArgs.hasFlag(dryRunArg) ? ReformatMode.DRY_RUN : ReformatMode.REFORMAT);
             return;
         }
 
@@ -70,7 +74,7 @@ public final class Main {
         });
     }
 
-    private static void reformat(Path path) throws IOException {
+    private static void reformat(Path path, boolean verbose, ReformatMode mode) throws IOException {
         if (!Files.exists(path)) {
             throw new NoSuchFileException("File " + path + " does not exist");
         }
@@ -79,13 +83,20 @@ public final class Main {
         TranslationModel model = dir ? Project.openDirectory(path) : TranslationFile.of(path);
 
         for (var file : model.getFiles().subList(1, model.getFiles().size())) {
-            file.setSchema(model.getSchema());
+            file.applySchema(model.getSchema(), verbose);
         }
+
+        if (mode == ReformatMode.DRY_RUN) return;
 
         for (var file : model.getFiles()) {
             try (var writer = Files.newBufferedWriter(file.getFilePath(), StandardCharsets.UTF_8)) {
                 TranslationFileWriter.write(writer, file.translationsAsMap(), file.getSchema());
             }
         }
+    }
+
+    private enum ReformatMode {
+        DRY_RUN,
+        REFORMAT,
     }
 }
