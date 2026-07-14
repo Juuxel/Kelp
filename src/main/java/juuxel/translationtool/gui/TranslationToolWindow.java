@@ -17,8 +17,12 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
 import javax.swing.filechooser.FileFilter;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -46,10 +50,12 @@ public final class TranslationToolWindow extends JFrame {
                 showErrorPopup(e);
             }
         });
+        var saveProjectItem = new JMenuItem(saveProjectAction);
+        saveProjectItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK));
         var closeProjectAction = new SimpleAction("Close Project", this::closeProject);
         fileMenu.add(new SimpleAction("Open Project", this::openProject));
         fileMenu.add(new SimpleAction("Open Single File", this::openFile));
-        fileMenu.add(saveProjectAction);
+        fileMenu.add(saveProjectItem);
         fileMenu.add(closeProjectAction);
         projectDependentActions = List.of(saveProjectAction, closeProjectAction);
         setProjectDependentActionsEnabled(false);
