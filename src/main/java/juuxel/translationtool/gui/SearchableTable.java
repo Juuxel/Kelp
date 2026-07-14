@@ -1,6 +1,7 @@
 package juuxel.translationtool.gui;
 
 import javax.swing.Action;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -22,23 +23,31 @@ public final class SearchableTable extends JPanel {
     public SearchableTable(JTable table, Function<JTable, JScrollPane> scrollFactory) {
         this.table = table;
         var scroll = scrollFactory.apply(table);
-        var closeButton = new JButton("Close", Icons.close());
-        closeButton.addActionListener(_ -> {
-            searchBar.setVisible(false);
-        });
         searchBar.setVisible(false);
 
-        searchField.addActionListener(_ -> search());
+        searchField.addActionListener(_ -> search(false));
+
+        var searchButtonPanel = new JPanel();
+        searchButtonPanel.setLayout(new BoxLayout(searchButtonPanel, BoxLayout.X_AXIS));
+        searchButtonPanel.add(createActionButton(new SimpleAction("Search Up", Icons.arrowUp(), () -> search(true))));
+        searchButtonPanel.add(createActionButton(new SimpleAction("Search Down", Icons.arrowDown(), () -> search(false))));
+        searchButtonPanel.add(createActionButton(new SimpleAction("Close", Icons.close(), () -> searchBar.setVisible(false))));
 
         searchBar.add(searchField, BorderLayout.CENTER);
-        searchBar.add(closeButton, BorderLayout.EAST);
+        searchBar.add(searchButtonPanel, BorderLayout.EAST);
 
         setLayout(new BorderLayout());
         add(scroll, BorderLayout.CENTER);
         add(searchBar, BorderLayout.NORTH);
     }
 
-    private void search() {
+    private static JButton createActionButton(Action action) {
+        var button = new JButton(action);
+        button.setHideActionText(true);
+        return button;
+    }
+
+    private void search(boolean up) {
         var term = searchField.getText();
 
         if (term.isEmpty()) {
@@ -46,10 +55,10 @@ public final class SearchableTable extends JPanel {
             return;
         }
 
-        int start = term.equals(lastSearchTerm) ? lastSearchIndex + 1 : 0;
+        int start = term.equals(lastSearchTerm) ? (up ? lastSearchIndex : lastSearchIndex + 1) : 0;
         lastSearchTerm = term;
 
-        outer: for (int rawRow = 0; rawRow < table.getRowCount(); rawRow++) {
+        outer: for (int rawRow = up ? table.getRowCount() - 1 : 0; up ? rawRow >= 0 : rawRow < table.getRowCount(); rawRow += up ? -1 : 1) {
             int row = (rawRow + start) % table.getRowCount(); // for wraparound
 
             for (int col = 0; col < table.getColumnCount(); col++) {
