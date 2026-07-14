@@ -13,3 +13,9 @@ tasks.named('compileJava', JavaCompile) {
     options.javaModuleMainClass = 'juuxel.translationtool.Main'
     options.javaModuleVersion = version
 }
+
+tasks.named('jar', Jar) {
+    from('LICENSE') {
+        into 'META-INF'
+    }
+}
