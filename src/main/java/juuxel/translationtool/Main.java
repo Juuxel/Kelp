@@ -51,7 +51,7 @@ public final class Main {
             var version = Optional.ofNullable(Main.class.getModule().getDescriptor())
                 .flatMap(ModuleDescriptor::rawVersion)
                 .orElse("(unavailable version)");
-            System.out.println("Translation Tool " + version);
+            System.out.println("Kelp " + version);
             System.exit(parsedArgs.exitCode());
         }
 
