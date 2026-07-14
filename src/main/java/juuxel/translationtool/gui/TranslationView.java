@@ -20,6 +20,7 @@ import javax.swing.JTable;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableColumnModel;
@@ -59,8 +60,10 @@ public final class TranslationView {
         var columnModel = new DefaultTableColumnModel();
         var keyCol = new TableColumn(0, 75, renderer, null);
         keyCol.setHeaderValue("Key");
+        keyCol.setHeaderRenderer(new HeaderRendererImpl(Icons.key()));
         var valueCol = new TableColumn(1, 300, renderer, null);
         valueCol.setHeaderValue("Translation");
+        valueCol.setHeaderRenderer(new HeaderRendererImpl(Icons.translation()));
         columnModel.addColumn(keyCol);
         columnModel.addColumn(valueCol);
         this.tableModel = new TranslationFileTableModel();
@@ -380,6 +383,27 @@ public final class TranslationView {
                 setText("<html><i>Gap</i>");
             }
 
+            return this;
+        }
+    }
+
+    private static final class HeaderRendererImpl extends DefaultTableCellRenderer {
+        private final Icon icon;
+
+        HeaderRendererImpl(Icon icon) {
+            this.icon = icon;
+        }
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            var header = table.getTableHeader();
+            setBackground(header.getBackground());
+            setForeground(header.getForeground());
+            setFont(header.getFont());
+            setIcon(icon);
+            setBorder(UIManager.getBorder("TableHeader.cellBorder"));
+            setHorizontalAlignment(SwingConstants.CENTER);
             return this;
         }
     }

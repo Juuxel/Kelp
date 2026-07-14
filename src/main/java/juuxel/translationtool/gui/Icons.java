@@ -65,6 +65,14 @@ public final class Icons {
         return ICONS[13];
     }
 
+    public static Icon key() {
+        return ICONS[14];
+    }
+
+    public static Icon translation() {
+        return ICONS[15];
+    }
+
     private static Icon[] loadIcons() {
         try {
             BufferedImage fullImage;
