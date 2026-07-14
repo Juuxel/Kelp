@@ -28,6 +28,7 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Font;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
@@ -400,7 +401,7 @@ public final class TranslationView {
             var header = table.getTableHeader();
             setBackground(header.getBackground());
             setForeground(header.getForeground());
-            setFont(header.getFont());
+            setFont(header.getFont().deriveFont(Font.BOLD));
             setIcon(icon);
             setBorder(UIManager.getBorder("TableHeader.cellBorder"));
             setHorizontalAlignment(SwingConstants.CENTER);
