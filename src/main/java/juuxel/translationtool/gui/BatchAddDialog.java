@@ -21,6 +21,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.GridLayout;
@@ -44,6 +45,7 @@ public final class BatchAddDialog extends JDialog {
 
         var contentPane = new JPanel();
         contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
+        contentPane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
         fieldContainer.setLayout(new GridLayout(0, 1, 0, 5));
         addField();
@@ -58,14 +60,19 @@ public final class BatchAddDialog extends JDialog {
         fieldTitle.add(Box.createHorizontalGlue());
 
         var fieldScroll = new JScrollPane(fieldContainer);
-        fieldScroll.setBorder(BorderFactory.createLoweredSoftBevelBorder());
+        fieldScroll.setBorder(
+            BorderFactory.createCompoundBorder(
+                BorderFactory.createEmptyBorder(5, 0, 5, 0),
+                BorderFactory.createLoweredSoftBevelBorder()
+            )
+        );
 
         contentPane.add(fieldTitle);
         contentPane.add(fieldScroll);
 
-        var keyLabel = new JLabel("Key");
-        var translationLabel = new JLabel("Translation");
-        var sortKeyLabel = new JLabel("Insert After...");
+        var keyLabel = new JLabel("Key", Icons.key(), SwingConstants.LEADING);
+        var translationLabel = new JLabel("Translation", Icons.translation(), SwingConstants.LEADING);
+        var sortKeyLabel = new JLabel("Insert After...", Icons.arrowDown(), SwingConstants.LEADING);
         var docListener = new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
@@ -130,15 +137,23 @@ public final class BatchAddDialog extends JDialog {
             fieldContainer.remove(fieldView);
             fields.remove(fieldView);
             updateAddEnabled();
+            updateFieldDeleteEnabled();
             revalidate();
         });
         fieldContainer.add(fieldView);
         updateAddEnabled();
+        updateFieldDeleteEnabled();
         revalidate();
     }
 
     private void updateAddEnabled() {
         addAction.setEnabled(!keyField.getText().isEmpty() && !translationField.getText().isEmpty() && !sortKeyField.getText().isEmpty() && !fields.isEmpty());
+    }
+
+    private void updateFieldDeleteEnabled() {
+        for (FieldView field : fields) {
+            field.deleteButton.setEnabled(fields.size() > 1);
+        }
     }
 
     public boolean isApproved() {
@@ -170,8 +185,8 @@ public final class BatchAddDialog extends JDialog {
             setLayout(layout);
 
             var nameLabel = new JLabel("Name");
-            var keysLabel = new JLabel("Keys");
-            var translationsLabel = new JLabel("Translations");
+            var keysLabel = new JLabel("Keys", Icons.key(), SwingConstants.LEADING);
+            var translationsLabel = new JLabel("Translations", Icons.translation(), SwingConstants.LEADING);
 
             layout.setHorizontalGroup(
                 layout.createSequentialGroup()
