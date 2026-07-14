@@ -15,6 +15,7 @@ import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.io.IOException;
@@ -61,6 +62,9 @@ public final class TranslationTool {
         fileList.addListSelectionListener(_ -> {
             cards.show(central, fileList.getSelectedValue().toString());
         });
+
+        // Make the file list automatically shrink to fit when opened.
+        SwingUtilities.invokeLater(mainView::revalidate);
     }
 
     public void showErrorPopup(Exception e) {
