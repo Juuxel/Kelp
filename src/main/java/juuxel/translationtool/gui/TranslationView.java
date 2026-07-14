@@ -17,6 +17,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JToolBar;
+import javax.swing.KeyStroke;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableColumnModel;
@@ -24,6 +25,8 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -122,6 +125,11 @@ public final class TranslationView {
         toolBar.addSeparator();
         toolBar.add(undoAction);
         toolBar.add(redoAction);
+
+        mainView.getActionMap().put("undo", undoAction);
+        mainView.getActionMap().put("redo", redoAction);
+        mainView.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_DOWN_MASK), "undo");
+        mainView.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK), "redo");
 
         if (file != owner.getModel().getPrimaryFile()) {
             toolBar.addSeparator();
