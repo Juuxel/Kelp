@@ -82,6 +82,7 @@ public final class TranslationToolWindow extends JFrame {
             var path = Path.of(filePath);
             boolean dir = Files.isDirectory(path);
             var model = dir ? Project.openDirectory(path) : TranslationFile.of(path);
+            fileChooser.setSelectedFile(path.toFile());
             setModel(model);
         } catch (IOException e) {
             e.printStackTrace();
