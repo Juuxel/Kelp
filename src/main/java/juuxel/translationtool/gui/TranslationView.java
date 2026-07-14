@@ -10,6 +10,7 @@ import juuxel.translationtool.gui.model.TranslationFile;
 import juuxel.translationtool.util.Mth;
 
 import javax.swing.Action;
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -18,6 +19,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
+import javax.swing.SwingConstants;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableColumnModel;
@@ -71,22 +73,29 @@ public final class TranslationView {
             JScrollPane.HORIZONTAL_SCROLLBAR_NEVER
         ));
 
-        var toolBar = new JToolBar();
+        var toolBar = new JToolBar() {
+            @Override
+            protected JButton createActionComponent(Action a) {
+                var button = super.createActionComponent(a);
+                button.setHideActionText(false);
+                return button;
+            }
+        };
         toolBar.setFloatable(false);
-        addAboveAction = new SimpleAction("Above", () -> addRow(AddPosition.BEFORE_SELECTION, new TranslationFile.Translation()));
-        addBelowAction = new SimpleAction("Below", () -> addRow(AddPosition.AFTER_SELECTION, new TranslationFile.Translation()));
-        addGapAboveAction = new SimpleAction("Above", () -> addRow(AddPosition.BEFORE_SELECTION, new TranslationFile.Gap()));
-        addGapBelowAction = new SimpleAction("Below", () -> addRow(AddPosition.AFTER_SELECTION, new TranslationFile.Gap()));
-        removeAction = new SimpleAction("Delete", this::deleteSelectedRows);
-        moveUpAction = new SimpleAction("Move Up", () -> moveSelectedRow(true));
-        moveDownAction = new SimpleAction("Move Down", () -> moveSelectedRow(false));
-        undoAction = new SimpleAction("Undo", () -> {
+        addAboveAction = new SimpleAction("Above", Icons.arrowUp(), () -> addRow(AddPosition.BEFORE_SELECTION, new TranslationFile.Translation()));
+        addBelowAction = new SimpleAction("Below", Icons.arrowDown(), () -> addRow(AddPosition.AFTER_SELECTION, new TranslationFile.Translation()));
+        addGapAboveAction = new SimpleAction("Above", Icons.arrowUp(), () -> addRow(AddPosition.BEFORE_SELECTION, new TranslationFile.Gap()));
+        addGapBelowAction = new SimpleAction("Below", Icons.arrowDown(), () -> addRow(AddPosition.AFTER_SELECTION, new TranslationFile.Gap()));
+        removeAction = new SimpleAction("Delete", Icons.delete(), this::deleteSelectedRows);
+        moveUpAction = new SimpleAction("Move Up", Icons.arrowUp(), () -> moveSelectedRow(true));
+        moveDownAction = new SimpleAction("Move Down", Icons.arrowDown(), () -> moveSelectedRow(false));
+        undoAction = new SimpleAction("Undo", Icons.undo(), () -> {
             var snapshot = file.undo();
             tableModel.fireTableDataChanged();
             updateUndoRedoEnabled();
             if (snapshot != null) refreshTableModelFromSnapshot(snapshot);
         });
-        redoAction = new SimpleAction("Redo", () -> {
+        redoAction = new SimpleAction("Redo", Icons.redo(), () -> {
             var snapshot = file.redo();
             tableModel.fireTableDataChanged();
             updateUndoRedoEnabled();
@@ -97,8 +106,8 @@ public final class TranslationView {
         var addMenu = new JPopupMenu("Add");
         addMenu.add(addAboveAction);
         addMenu.add(addBelowAction);
-        addMenu.add(new SimpleAction("At End", () -> addRow(AddPosition.AT_END, new TranslationFile.Translation())));
-        addMenu.add(new SimpleAction("Batch", () -> {
+        addMenu.add(new SimpleAction("At End", Icons.atEnd(), () -> addRow(AddPosition.AT_END, new TranslationFile.Translation())));
+        addMenu.add(new SimpleAction("Batch", Icons.batch(), () -> {
             var dialog = new BatchAddDialog(owner.getWindow());
             dialog.setVisible(true);
 
@@ -120,9 +129,9 @@ public final class TranslationView {
         var addGapMenu = new JPopupMenu("Add Gap");
         addGapMenu.add(addGapAboveAction);
         addGapMenu.add(addGapBelowAction);
-        addGapMenu.add(new SimpleAction("At End", () -> addRow(AddPosition.AT_END, new TranslationFile.Gap())));
-        toolBar.add(createPopupMenuButton(addMenu));
-        toolBar.add(createPopupMenuButton(addGapMenu));
+        addGapMenu.add(new SimpleAction("At End", Icons.atEnd(), () -> addRow(AddPosition.AT_END, new TranslationFile.Gap())));
+        toolBar.add(createPopupMenuButton(addMenu, Icons.add()));
+        toolBar.add(createPopupMenuButton(addGapMenu, Icons.gap()));
         toolBar.add(removeAction);
         toolBar.addSeparator();
         toolBar.add(moveUpAction);
@@ -159,8 +168,10 @@ public final class TranslationView {
         mainView.add(toolBar, BorderLayout.PAGE_START);
     }
 
-    private static JButton createPopupMenuButton(JPopupMenu menu) {
-        var button = new JButton(menu.getLabel());
+    private static JButton createPopupMenuButton(JPopupMenu menu, Icon icon) {
+        var button = new JButton(menu.getLabel(), icon);
+        button.setHorizontalTextPosition(SwingConstants.CENTER);
+        button.setVerticalTextPosition(SwingConstants.BOTTOM);
         button.addActionListener(_ -> menu.show(button, button.getX(), button.getY() + button.getHeight()));
         return button;
     }

@@ -42,7 +42,7 @@ public final class TranslationToolWindow extends JFrame {
         // Set up menu bar
         JMenuBar menuBar = new JMenuBar();
         JMenu fileMenu = new JMenu("File");
-        var saveProjectAction = new SimpleAction("Save Project", () -> {
+        var saveProjectAction = new SimpleAction("Save Project", Icons.save(), () -> {
             try {
                 saveProject();
             } catch (IOException e) {
@@ -52,9 +52,9 @@ public final class TranslationToolWindow extends JFrame {
         });
         var saveProjectItem = new JMenuItem(saveProjectAction);
         saveProjectItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK));
-        var closeProjectAction = new SimpleAction("Close Project", this::closeProject);
-        fileMenu.add(new SimpleAction("Open Project", this::openProject));
-        fileMenu.add(new SimpleAction("Open Single File", this::openFile));
+        var closeProjectAction = new SimpleAction("Close Project", Icons.close(), this::closeProject);
+        fileMenu.add(new SimpleAction("Open Project", Icons.project(), this::openProject));
+        fileMenu.add(new SimpleAction("Open Single File", Icons.file(), this::openFile));
         fileMenu.add(saveProjectItem);
         fileMenu.add(closeProjectAction);
         projectDependentActions = List.of(saveProjectAction, closeProjectAction);

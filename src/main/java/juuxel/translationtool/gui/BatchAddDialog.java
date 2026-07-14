@@ -33,7 +33,7 @@ public final class BatchAddDialog extends JDialog {
     private final JTextField keyField = new JTextField();
     private final JTextField translationField = new JTextField();
     private final JTextField sortKeyField = new JTextField();
-    private final Action addAction = new SimpleAction("Add", () -> {
+    private final Action addAction = new SimpleAction("Add", Icons.batch(), () -> {
         approved = true;
         dispose();
     });
@@ -48,7 +48,7 @@ public final class BatchAddDialog extends JDialog {
         fieldContainer.setLayout(new GridLayout(0, 1, 0, 5));
         addField();
 
-        var addFieldButton = new JButton("Add");
+        var addFieldButton = new JButton("Add", Icons.add());
         addFieldButton.addActionListener(_ -> addField());
         var fieldTitle = new JPanel();
         fieldTitle.setLayout(new BoxLayout(fieldTitle, BoxLayout.X_AXIS));
@@ -111,7 +111,7 @@ public final class BatchAddDialog extends JDialog {
         var buttonPanel = new JPanel();
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
         buttonPanel.add(Box.createHorizontalGlue());
-        buttonPanel.add(new JButton(new SimpleAction("Cancel", this::dispose)));
+        buttonPanel.add(new JButton(new SimpleAction("Cancel", Icons.close(), this::dispose)));
         buttonPanel.add(Box.createHorizontalStrut(5));
         buttonPanel.add(new JButton(addAction));
 
@@ -163,7 +163,7 @@ public final class BatchAddDialog extends JDialog {
         private final JTextField nameField = new JTextField();
         private final JTextField keysField = new JTextField();
         private final JTextField translationsField = new JTextField();
-        private final JButton deleteButton = new JButton("Delete");
+        private final JButton deleteButton = new JButton("Delete", Icons.delete());
 
         FieldView() {
             var layout = new GroupLayout(this);

@@ -15,14 +15,14 @@ public final class SearchableTable extends JPanel {
     private final JTable table;
     private final JPanel searchBar = new JPanel(new BorderLayout());
     private final JTextField searchField = new JTextField();
-    private final Action showSearchBarAction = new SimpleAction("Search", this::showSearchBar);
+    private final Action showSearchBarAction = new SimpleAction("Search", Icons.search(), this::showSearchBar);
     private String lastSearchTerm = "";
     private int lastSearchIndex;
 
     public SearchableTable(JTable table, Function<JTable, JScrollPane> scrollFactory) {
         this.table = table;
         var scroll = scrollFactory.apply(table);
-        var closeButton = new JButton("Close");
+        var closeButton = new JButton("Close", Icons.close());
         closeButton.addActionListener(_ -> {
             searchBar.setVisible(false);
         });

@@ -7,7 +7,7 @@
 package juuxel.translationtool.gui;
 
 import javax.swing.AbstractAction;
-import javax.swing.Action;
+import javax.swing.Icon;
 import java.awt.event.ActionEvent;
 
 public final class SimpleAction extends AbstractAction {
@@ -15,7 +15,13 @@ public final class SimpleAction extends AbstractAction {
 
     public SimpleAction(String name, Runnable listener) {
         this.listener = listener;
-        putValue(Action.NAME, name);
+        putValue(NAME, name);
+    }
+
+    public SimpleAction(String name, Icon icon, Runnable listener) {
+        this(name, listener);
+        putValue(SMALL_ICON, icon);
+        putValue(LARGE_ICON_KEY, icon);
     }
 
     @Override
