@@ -143,7 +143,7 @@ public final class TranslationView {
         toolBar.add(undoAction);
         toolBar.add(redoAction);
         toolBar.addSeparator();
-        toolBar.add(searchableTable.getShowSearchBarAction());
+        toolBar.add(searchableTable.getToggleSearchBarAction());
 
         var actionMap = mainView.getActionMap();
         var inputMap = mainView.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);

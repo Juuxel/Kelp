@@ -17,6 +17,7 @@ public final class SearchableTable extends JPanel {
     private final JPanel searchBar = new JPanel(new BorderLayout());
     private final JTextField searchField = new JTextField();
     private final Action showSearchBarAction = new SimpleAction("Search", Icons.search(), this::showSearchBar);
+    private final Action toggleSearchBarAction = new SimpleAction("Search", Icons.search(), this::toggleSearchBar);
     private String lastSearchTerm = "";
     private int lastSearchIndex;
 
@@ -79,7 +80,19 @@ public final class SearchableTable extends JPanel {
         SwingUtilities.invokeLater(searchField::requestFocusInWindow);
     }
 
+    public void toggleSearchBar() {
+        if (!searchBar.isVisible()) {
+            showSearchBar();
+        } else {
+            searchBar.setVisible(false);
+        }
+    }
+
     public Action getShowSearchBarAction() {
         return showSearchBarAction;
+    }
+
+    public Action getToggleSearchBarAction() {
+        return toggleSearchBarAction;
     }
 }
