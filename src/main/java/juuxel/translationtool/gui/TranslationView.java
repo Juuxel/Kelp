@@ -62,9 +62,14 @@ public final class TranslationView {
         columnModel.addColumn(keyCol);
         columnModel.addColumn(valueCol);
         this.tableModel = new TranslationFileTableModel();
-        this.table  = new JTable(tableModel, columnModel);
+        this.table = new JTable(tableModel, columnModel);
         table.setTableHeader(new JTableHeader(columnModel));
         table.getSelectionModel().addListSelectionListener(_ -> updateSelectionDependentActions());
+        var searchableTable = new SearchableTable(table, t -> new JScrollPane(
+            t,
+            JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER
+        ));
 
         var toolBar = new JToolBar();
         toolBar.setFloatable(false);
@@ -125,11 +130,17 @@ public final class TranslationView {
         toolBar.addSeparator();
         toolBar.add(undoAction);
         toolBar.add(redoAction);
+        toolBar.addSeparator();
+        toolBar.add(searchableTable.getShowSearchBarAction());
 
-        mainView.getActionMap().put("undo", undoAction);
-        mainView.getActionMap().put("redo", redoAction);
-        mainView.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_DOWN_MASK), "undo");
-        mainView.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK), "redo");
+        var actionMap = mainView.getActionMap();
+        var inputMap = mainView.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+        actionMap.put("undo", undoAction);
+        actionMap.put("redo", redoAction);
+        actionMap.put("search", searchableTable.getShowSearchBarAction());
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_DOWN_MASK), "undo");
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK), "redo");
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_DOWN_MASK), "search");
 
         if (file != owner.getModel().getPrimaryFile()) {
             toolBar.addSeparator();
@@ -144,14 +155,7 @@ public final class TranslationView {
             }));
         }
 
-        mainView.add(
-            new JScrollPane(
-                table,
-                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER
-            ),
-            BorderLayout.CENTER
-        );
+        mainView.add(searchableTable, BorderLayout.CENTER);
         mainView.add(toolBar, BorderLayout.PAGE_START);
     }
 
