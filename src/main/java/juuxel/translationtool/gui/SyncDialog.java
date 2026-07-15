@@ -59,6 +59,7 @@ public final class SyncDialog extends JDialog {
         var enabledCol = new TableColumn(0, 10);
         var keyCol = new TableColumn(1, 300);
         keyCol.setHeaderValue("Key");
+        keyCol.setHeaderRenderer(new IconTableHeaderRenderer(Icons.key()));
         columnModel.addColumn(enabledCol);
         columnModel.addColumn(keyCol);
         var header = new JTableHeader(columnModel) {
