@@ -22,6 +22,9 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public final class TranslationFile implements TranslationModel {
     private final Path filePath;
@@ -89,7 +92,14 @@ public final class TranslationFile implements TranslationModel {
     }
 
     public void applySchema(Schema schema, boolean logRemovals) {
-        var translations = translationsAsMap();
+        Map<String, Translation> translations =
+            rows.stream()
+                .mapMulti((Row row, Consumer<Translation> sink) -> {
+                    if (row instanceof Translation translation) {
+                        sink.accept(translation);
+                    }
+                })
+                .collect(Collectors.toMap(Translation::getKey, Function.identity()));
         Set<String> remainingKeys = logRemovals ? new HashSet<>(translations.keySet()) : null;
         rows.clear();
 
@@ -101,7 +111,7 @@ public final class TranslationFile implements TranslationModel {
                 case Schema.Key(var key) -> {
                     var translation = translations.get(key);
                     if (translation != null) {
-                        rows.add(new Translation(key, translation));
+                        rows.add(translation);
                         shouldAddGap = true;
                         if (logRemovals) remainingKeys.remove(key);
                     }
