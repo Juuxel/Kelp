@@ -55,7 +55,10 @@ public final class TranslationToolWindow extends JFrame implements App {
         var saveProjectItem = new JMenuItem(saveProjectAction);
         saveProjectItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK));
         var closeProjectAction = new SimpleAction("Close Project", Icons.close(), this::closeProject);
-        fileMenu.add(new SimpleAction("Open Project", Icons.project(), this::openProject));
+        var openProjectAction = new SimpleAction("Open Project", Icons.project(), this::openProject);
+        var openProjectItem = new JMenuItem(openProjectAction);
+        openProjectItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK));
+        fileMenu.add(openProjectItem);
         fileMenu.add(new SimpleAction("Open Single File", Icons.file(), this::openFile));
         fileMenu.add(saveProjectItem);
         fileMenu.add(closeProjectAction);
