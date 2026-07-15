@@ -136,7 +136,7 @@ public final class TranslationView {
 
         if (file != owner.getModel().getPrimaryFile()) {
             toolBar.addSeparator();
-            toolBar.add(new SimpleAction("Apply Schema", () -> {
+            toolBar.add(new SimpleAction("Apply Schema", Icons.brush(), () -> {
                 file.createSnapshot();
                 file.applySchema(owner.getModel().getSchema(), false);
                 tableModel.fireTableDataChanged();

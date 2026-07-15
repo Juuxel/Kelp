@@ -25,52 +25,60 @@ public final class Icons {
         return ICONS[3];
     }
 
-    public static Icon search() {
-        return ICONS[4];
-    }
-
-    public static Icon undo() {
+    public static Icon sync() {
         return ICONS[5];
     }
 
-    public static Icon redo() {
+    public static Icon search() {
+        return ICONS[5];
+    }
+
+    public static Icon undo() {
         return ICONS[6];
     }
 
-    public static Icon gap() {
+    public static Icon redo() {
         return ICONS[7];
     }
 
-    public static Icon atEnd() {
+    public static Icon gap() {
         return ICONS[8];
     }
 
-    public static Icon close() {
+    public static Icon brush() {
         return ICONS[9];
     }
 
-    public static Icon file() {
+    public static Icon atEnd() {
         return ICONS[10];
     }
 
-    public static Icon project() {
+    public static Icon close() {
         return ICONS[11];
     }
 
-    public static Icon save() {
+    public static Icon file() {
         return ICONS[12];
     }
 
-    public static Icon batch() {
+    public static Icon project() {
         return ICONS[13];
     }
 
+    public static Icon save() {
+        return ICONS[15];
+    }
+
+    public static Icon batch() {
+        return ICONS[16];
+    }
+
     public static Icon key() {
-        return ICONS[14];
+        return ICONS[17];
     }
 
     public static Icon translation() {
-        return ICONS[15];
+        return ICONS[18];
     }
 
     private static Icon[] loadIcons() {
