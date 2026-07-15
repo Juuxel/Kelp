@@ -11,7 +11,6 @@ import juuxel.translationtool.gui.model.TranslationModel;
 import juuxel.translationtool.io.TranslationFileWriter;
 
 import javax.swing.JComponent;
-import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -24,16 +23,17 @@ import java.nio.file.Files;
 import java.util.List;
 
 public final class TranslationTool {
-    private final TranslationToolWindow window;
+    private final App app;
     private final List<FileListEntry> fileListEntries;
     private final JList<FileListEntry> fileList;
     private final JPanel mainView;
 
     private final TranslationModel model;
     private boolean dirty;
+    private TranslationView selectedView;
 
-    public TranslationTool(TranslationToolWindow window, TranslationModel model) {
-        this.window = window;
+    public TranslationTool(App app, TranslationModel model) {
+        this.app = app;
         this.model = model;
 
         var files =
@@ -43,6 +43,7 @@ public final class TranslationTool {
                 .toArray(FileListEntry[]::new);
         this.fileListEntries = List.of(files);
         this.fileList = new JList<>(files);
+        setSelectedView(files[0].view);
         var listScrollPane = new JScrollPane(
             fileList,
             JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
@@ -61,18 +62,24 @@ public final class TranslationTool {
 
         fileList.addListSelectionListener(_ -> {
             cards.show(central, fileList.getSelectedValue().toString());
+            setSelectedView(fileListEntries.get(fileList.getSelectedIndex()).view);
         });
 
         // Make the file list automatically shrink to fit when opened.
         SwingUtilities.invokeLater(mainView::revalidate);
     }
 
-    public void showErrorPopup(Exception e) {
-        window.showErrorPopup(e);
+    private void setSelectedView(TranslationView selectedView) {
+        this.selectedView = selectedView;
+        selectedView.whenSelected();
     }
 
-    public JFrame getWindow() {
-        return window;
+    public App getApp() {
+        return app;
+    }
+
+    public TranslationView getSelectedView() {
+        return selectedView;
     }
 
     public TranslationModel getModel() {
@@ -89,7 +96,7 @@ public final class TranslationTool {
 
     public void markDirty() {
         dirty = true;
-        window.refreshTitle();
+        app.refreshTitle();
     }
 
     public String stateToString() {
@@ -106,7 +113,7 @@ public final class TranslationTool {
         }
 
         dirty = false;
-        window.refreshTitle();
+        app.refreshTitle();
     }
 
     public List<FileListEntry> getFileListEntries() {

@@ -49,8 +49,6 @@ public final class TranslationView {
     private final Action removeAction;
     private final Action moveUpAction;
     private final Action moveDownAction;
-    private final Action undoAction;
-    private final Action redoAction;
 
     public TranslationView(TranslationTool owner, TranslationFile file) {
         this.owner = owner;
@@ -93,18 +91,6 @@ public final class TranslationView {
         removeAction = new SimpleAction("Delete", Icons.delete(), this::deleteSelectedRows);
         moveUpAction = new SimpleAction("Move Up", Icons.arrowUp(), () -> moveSelectedRow(true));
         moveDownAction = new SimpleAction("Move Down", Icons.arrowDown(), () -> moveSelectedRow(false));
-        undoAction = new SimpleAction("Undo", Icons.undo(), () -> {
-            var snapshot = file.undo();
-            tableModel.fireTableDataChanged();
-            updateUndoRedoEnabled();
-            if (snapshot != null) refreshTableModelFromSnapshot(snapshot);
-        });
-        redoAction = new SimpleAction("Redo", Icons.redo(), () -> {
-            var snapshot = file.redo();
-            tableModel.fireTableDataChanged();
-            updateUndoRedoEnabled();
-            if (snapshot != null) refreshTableModelFromSnapshot(snapshot);
-        });
         updateUndoRedoEnabled();
         updateSelectionDependentActions();
         var addMenu = new JPopupMenu("Add");
@@ -112,7 +98,7 @@ public final class TranslationView {
         addMenu.add(addBelowAction);
         addMenu.add(new SimpleAction("At End", Icons.atEnd(), () -> addRow(AddPosition.AT_END, new TranslationFile.Translation())));
         addMenu.add(new SimpleAction("Batch", Icons.batch(), () -> {
-            var dialog = new BatchAddDialog(owner.getWindow());
+            var dialog = new BatchAddDialog(owner.getApp().getFrame());
             dialog.setVisible(true);
 
             if (dialog.isApproved()) {
@@ -125,7 +111,7 @@ public final class TranslationView {
                     updateSelectionDependentActions();
                 } catch (Exception e) {
                     e.printStackTrace();
-                    owner.showErrorPopup(e);
+                    owner.getApp().showErrorPopup(e);
                     file.dropSnapshot();
                 }
             }
@@ -141,18 +127,11 @@ public final class TranslationView {
         toolBar.add(moveUpAction);
         toolBar.add(moveDownAction);
         toolBar.addSeparator();
-        toolBar.add(undoAction);
-        toolBar.add(redoAction);
-        toolBar.addSeparator();
         toolBar.add(searchableTable.getToggleSearchBarAction());
 
         var actionMap = mainView.getActionMap();
         var inputMap = mainView.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
-        actionMap.put("undo", undoAction);
-        actionMap.put("redo", redoAction);
         actionMap.put("search", searchableTable.getShowSearchBarAction());
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_DOWN_MASK), "undo");
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK), "redo");
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_DOWN_MASK), "search");
 
         if (file != owner.getModel().getPrimaryFile()) {
@@ -182,6 +161,24 @@ public final class TranslationView {
 
     public JComponent asComponent() {
         return mainView;
+    }
+
+    public void whenSelected() {
+        updateUndoRedoEnabled();
+    }
+
+    public void undo() {
+        var snapshot = file.undo();
+        tableModel.fireTableDataChanged();
+        updateUndoRedoEnabled();
+        if (snapshot != null) refreshTableModelFromSnapshot(snapshot);
+    }
+
+    public void redo() {
+        var snapshot = file.redo();
+        tableModel.fireTableDataChanged();
+        updateUndoRedoEnabled();
+        if (snapshot != null) refreshTableModelFromSnapshot(snapshot);
     }
 
     private void updateSelectionDependentActions() {
@@ -227,8 +224,7 @@ public final class TranslationView {
     }
 
     private void updateUndoRedoEnabled() {
-        undoAction.setEnabled(file.canUndo());
-        redoAction.setEnabled(file.canRedo());
+        owner.getApp().setUndoRedoEnabled(file.canUndo(), file.canRedo());
     }
 
     private void deleteSelectedRows() {

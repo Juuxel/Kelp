@@ -31,11 +31,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-public final class TranslationToolWindow extends JFrame {
+public final class TranslationToolWindow extends JFrame implements App {
     private static final String TITLE = "Kelp - ";
     private final JFileChooser fileChooser = new JFileChooser();
     private final JComponent emptyProjectView = new JLabel("No project opened");
     private final List<Action> projectDependentActions;
+    private final JMenuItem undoButton = new JMenuItem("Undo", Icons.undo());
+    private final JMenuItem redoButton = new JMenuItem("Redo", Icons.redo());
     private TranslationTool translationTool = null;
 
     public TranslationToolWindow() {
@@ -59,7 +61,24 @@ public final class TranslationToolWindow extends JFrame {
         fileMenu.add(closeProjectAction);
         projectDependentActions = List.of(saveProjectAction, closeProjectAction);
         setProjectDependentActionsEnabled(false);
+        undoButton.addActionListener(_ -> {
+            if (translationTool != null) {
+                translationTool.getSelectedView().undo();
+            }
+        });
+        redoButton.addActionListener(_ -> {
+            if (translationTool != null) {
+                translationTool.getSelectedView().redo();
+            }
+        });
+        setUndoRedoEnabled(false, false);
+        undoButton.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_DOWN_MASK));
+        redoButton.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK));
+        var editMenu = new JMenu("Edit");
+        editMenu.add(undoButton);
+        editMenu.add(redoButton);
         menuBar.add(fileMenu);
+        menuBar.add(editMenu);
         setJMenuBar(menuBar);
         setContentPane(emptyProjectView);
 
@@ -140,6 +159,7 @@ public final class TranslationToolWindow extends JFrame {
         refreshTitle();
     }
 
+    @Override
     public void showErrorPopup(Exception e) {
         JOptionPane.showMessageDialog(this, e.getMessage(), "An error occurred", JOptionPane.ERROR_MESSAGE);
     }
@@ -178,6 +198,7 @@ public final class TranslationToolWindow extends JFrame {
             }
         }
 
+        setUndoRedoEnabled(false, false);
         translationTool = null;
         setContentPane(emptyProjectView);
         revalidate();
@@ -192,7 +213,19 @@ public final class TranslationToolWindow extends JFrame {
         }
     }
 
+    @Override
     public void refreshTitle() {
         setTitle(TITLE + (translationTool != null ? translationTool.stateToString() : "unopened"));
+    }
+
+    @Override
+    public void setUndoRedoEnabled(boolean undo, boolean redo) {
+        undoButton.setEnabled(undo);
+        redoButton.setEnabled(redo);
+    }
+
+    @Override
+    public JFrame getFrame() {
+        return this;
     }
 }
