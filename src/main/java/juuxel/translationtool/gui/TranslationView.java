@@ -18,7 +18,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JToolBar;
-import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.table.AbstractTableModel;
@@ -29,8 +28,6 @@ import javax.swing.table.TableColumn;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Font;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -74,6 +71,7 @@ public final class TranslationView {
             JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
             JScrollPane.HORIZONTAL_SCROLLBAR_NEVER
         ));
+        searchableTable.addSearchActionKeyBinding(mainView);
 
         var toolBar = new JToolBar() {
             @Override
@@ -128,11 +126,6 @@ public final class TranslationView {
         toolBar.add(moveDownAction);
         toolBar.addSeparator();
         toolBar.add(searchableTable.getToggleSearchBarAction());
-
-        var actionMap = mainView.getActionMap();
-        var inputMap = mainView.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
-        actionMap.put("search", searchableTable.getShowSearchBarAction());
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_DOWN_MASK), "search");
 
         if (file != owner.getModel().getPrimaryFile()) {
             toolBar.addSeparator();

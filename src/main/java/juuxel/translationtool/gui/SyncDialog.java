@@ -89,12 +89,17 @@ public final class SyncDialog extends JDialog {
         });
         var table = new JTable(tableModel, columnModel);
         table.setTableHeader(header);
-        contentPane.add(new JScrollPane(table));
+        var searchableTable = new SearchableTable(table, JScrollPane::new, (_, columnClass) -> columnClass == Object.class);
+        searchableTable.addSearchActionKeyBinding(contentPane);
+        contentPane.add(searchableTable);
 
         var buttonPanel = new JPanel();
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
-        buttonPanel.add(Box.createHorizontalGlue());
+        var searchButton = new JButton(searchableTable.getToggleSearchBarAction());
+        searchButton.setHideActionText(true);
+        buttonPanel.add(searchButton);
         buttonPanel.add(applySchemaCheckBox);
+        buttonPanel.add(Box.createHorizontalGlue());
         buttonPanel.add(new JButton(new SimpleAction("Cancel", Icons.close(), this::dispose)));
         buttonPanel.add(Box.createHorizontalStrut(5));
         buttonPanel.add(new JButton(addAction));

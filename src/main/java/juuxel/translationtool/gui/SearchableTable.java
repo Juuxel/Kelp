@@ -3,17 +3,22 @@ package juuxel.translationtool.gui;
 import javax.swing.Action;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.util.Objects;
 import java.util.function.Function;
 
 public final class SearchableTable extends JPanel {
     private final JTable table;
+    private final ColumnPredicate columnPredicate;
     private final JPanel searchBar = new JPanel(new BorderLayout());
     private final JTextField searchField = new JTextField();
     private final Action showSearchBarAction = new SimpleAction("Search", Icons.search(), this::showSearchBar);
@@ -22,7 +27,12 @@ public final class SearchableTable extends JPanel {
     private int lastSearchIndex;
 
     public SearchableTable(JTable table, Function<JTable, JScrollPane> scrollFactory) {
+        this(table, scrollFactory, (_, _) -> true);
+    }
+
+    public SearchableTable(JTable table, Function<JTable, JScrollPane> scrollFactory, ColumnPredicate columnPredicate) {
         this.table = table;
+        this.columnPredicate = columnPredicate;
         var scroll = scrollFactory.apply(table);
         searchBar.setVisible(false);
 
@@ -63,6 +73,7 @@ public final class SearchableTable extends JPanel {
             int row = (rawRow + start) % table.getRowCount(); // for wraparound
 
             for (int col = 0; col < table.getColumnCount(); col++) {
+                if (!columnPredicate.testColumn(col, table.getModel().getColumnClass(col))) continue;
                 var value = table.getModel().getValueAt(row, col);
                 if (Objects.toString(value).contains(term)) {
                     table.changeSelection(row, col, false, false);
@@ -94,5 +105,16 @@ public final class SearchableTable extends JPanel {
 
     public Action getToggleSearchBarAction() {
         return toggleSearchBarAction;
+    }
+
+    public void addSearchActionKeyBinding(JComponent component) {
+        var actionMap = component.getActionMap();
+        var inputMap = component.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+        actionMap.put("search", showSearchBarAction);
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_DOWN_MASK), "search");
+    }
+
+    public interface ColumnPredicate {
+        boolean testColumn(int index, Class<?> columnClass);
     }
 }
