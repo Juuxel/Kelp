@@ -113,11 +113,11 @@ public final class TranslationToolWindow extends JFrame implements App {
     }
 
     private void openProject() {
-        if (!closeProject()) return;
         fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         fileChooser.setFileFilter(null);
         int option = fileChooser.showOpenDialog(this);
         if (option != JFileChooser.APPROVE_OPTION) return;
+        if (!closeProject()) return;
 
         try {
             var model = Project.openDirectory(fileChooser.getSelectedFile().toPath());
@@ -129,7 +129,6 @@ public final class TranslationToolWindow extends JFrame implements App {
     }
 
     private void openFile() {
-        if (!closeProject()) return;
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         fileChooser.setFileFilter(new FileFilter() {
             @Override
@@ -144,6 +143,7 @@ public final class TranslationToolWindow extends JFrame implements App {
         });
         int option = fileChooser.showOpenDialog(this);
         if (option != JFileChooser.APPROVE_OPTION) return;
+        if (!closeProject()) return;
 
         try {
             var model = TranslationFile.of(fileChooser.getSelectedFile().toPath());
