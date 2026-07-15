@@ -136,6 +136,37 @@ public final class TranslationView {
 
         if (file != owner.getModel().getPrimaryFile()) {
             toolBar.addSeparator();
+            toolBar.add(new SimpleAction("Sync", Icons.sync(), () -> {
+                var dialog = new SyncDialog(owner.getApp().getFrame(), owner.getModel().getPrimaryFile(), file);
+                dialog.setVisible(true);
+
+                if (dialog.isApproved()) {
+                    file.createSnapshot();
+
+                    var rowsToAdd =
+                        dialog.getKeysToAdd().stream()
+                            .map(key -> new TranslationFile.Translation(key, ""))
+                            .toList();
+
+                    file.getRows().addAll(rowsToAdd);
+
+                    if (dialog.shouldApplySchema()) {
+                        file.applySchema(owner.getModel().getSchema(), false);
+                    }
+
+                    tableModel.fireTableDataChanged();
+                    table.clearSelection();
+
+                    for (var row : rowsToAdd) {
+                        int index = file.getRows().indexOf(row);
+                        table.addRowSelectionInterval(index, index);
+                    }
+
+                    owner.markDirty();
+                    updateUndoRedoEnabled();
+                    updateSelectionDependentActions();
+                }
+            }));
             toolBar.add(new SimpleAction("Apply Schema", Icons.brush(), () -> {
                 file.createSnapshot();
                 file.applySchema(owner.getModel().getSchema(), false);

@@ -19,8 +19,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.IdentityHashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SequencedMap;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -65,8 +67,8 @@ public final class TranslationFile implements TranslationModel {
         return List.of(this);
     }
 
-    public Map<String, String> translationsAsMap() {
-        var translations = new HashMap<String, String>();
+    public SequencedMap<String, String> translationsAsMap() {
+        var translations = new LinkedHashMap<String, String>();
 
         for (Row row : rows) {
             if (row instanceof Translation translation) {

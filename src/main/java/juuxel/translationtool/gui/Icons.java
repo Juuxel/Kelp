@@ -26,7 +26,7 @@ public final class Icons {
     }
 
     public static Icon sync() {
-        return ICONS[5];
+        return ICONS[4];
     }
 
     public static Icon search() {

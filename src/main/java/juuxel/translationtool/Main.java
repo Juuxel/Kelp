@@ -7,6 +7,7 @@
 package juuxel.translationtool;
 
 import juuxel.translationtool.gui.TranslationToolWindow;
+import juuxel.translationtool.gui.laf.TriStateCheckBoxUI;
 import juuxel.translationtool.gui.model.Project;
 import juuxel.translationtool.gui.model.TranslationFile;
 import juuxel.translationtool.gui.model.TranslationModel;
@@ -82,6 +83,7 @@ public final class Main {
         }
 
         SwingUtilities.invokeLater(() -> {
+            TriStateCheckBoxUI.install();
             var window = new TranslationToolWindow();
             window.setVisible(true);
 
