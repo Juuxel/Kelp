@@ -5,6 +5,17 @@ plugins {
 group = 'io.github.juuxel'
 version = '1.0.0'
 
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation platform(libs.junit.bom)
+    testImplementation libs.junit.jupiter.api
+    testRuntimeOnly libs.junit.jupiter.engine
+    testRuntimeOnly libs.junit.platform.launcher
+}
+
 tasks.withType(JavaCompile).configureEach {
     options.release = 25
 }
@@ -18,4 +29,8 @@ tasks.named('jar', Jar) {
     from('LICENSE') {
         into 'META-INF'
     }
+}
+
+tasks.named('test', Test) {
+    useJUnitPlatform()
 }
