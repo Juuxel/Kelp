@@ -7,6 +7,7 @@
 package juuxel.translationtool.gui.model;
 
 import juuxel.translationtool.schema.Schema;
+import juuxel.translationtool.util.PriorityComparator;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -17,13 +18,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public final class Project implements TranslationModel {
-    private static final Comparator<String> LANGUAGE_CODE_COMPARATOR = (a, b) -> {
-        if ("en_us.json".equals(a)) {
-            return "en_us.json".equals(b) ? 0 : -1;
-        }
-
-        return a.compareTo(b);
-    };
+    private static final Comparator<Path> LANGUAGE_FILE_SORTER = Comparator.comparing(
+        p -> p.getFileName().toString(),
+        new PriorityComparator<>("en_us.json").thenComparing(Comparator.naturalOrder())
+    );
     private final Path directory;
     private final List<TranslationFile> files;
 
@@ -36,9 +34,7 @@ public final class Project implements TranslationModel {
         try (var fileStream = Files.list(directory)) {
             var files = fileStream.collect(Collectors.toCollection(ArrayList::new));
             files.removeIf(p -> !Files.isRegularFile(p) || !p.getFileName().toString().endsWith(".json"));
-            files.sort(
-                Comparator.comparing(p -> p.getFileName().toString(), LANGUAGE_CODE_COMPARATOR)
-            );
+            files.sort(LANGUAGE_FILE_SORTER);
 
             if (files.isEmpty()) {
                 throw new IOException("Can't select empty directory");
