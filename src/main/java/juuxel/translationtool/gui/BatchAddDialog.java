@@ -24,6 +24,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.List;
@@ -114,6 +115,11 @@ public final class BatchAddDialog extends JDialog {
         );
 
         contentPane.add(textFieldContainer);
+
+        var hintLabel = new JLabel("<html><i>To reference fields, type <code>%field name%</code>.</i>");
+        var hintPanel = new JPanel(new FlowLayout(FlowLayout.LEADING));
+        hintPanel.add(hintLabel);
+        contentPane.add(hintPanel);
 
         var buttonPanel = new JPanel();
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
