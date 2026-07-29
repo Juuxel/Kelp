@@ -108,6 +108,7 @@ public final class TranslationView {
                 } catch (Exception e) {
                     e.printStackTrace();
                     owner.getApp().showErrorPopup(e);
+                    dialog.setVisible(true); // reshow dialog if things go wrong
                     file.dropSnapshot();
                 }
             }
