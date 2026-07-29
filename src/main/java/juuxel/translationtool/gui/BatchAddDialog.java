@@ -165,8 +165,8 @@ public final class BatchAddDialog extends JDialog {
             this.fields.stream()
                 .map(view -> new BatchAddInputs.Field(
                     view.nameField.getText(),
-                    List.of(view.keysField.getText().strip().split(", +")),
-                    List.of(view.translationsField.getText().strip().split(", +")),
+                    List.of(view.keysField.getText().strip().split(", *")),
+                    List.of(view.translationsField.getText().strip().split(", *")),
                     view.groupCheckBox.isSelected()
                 ))
                 .toList();
